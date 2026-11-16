@@ -1,0 +1,100 @@
+<Window x:Class="PerfDeck.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="PerfDeck 副屏监控"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="NoResize"
+        WindowStartupLocation="Manual"
+        ShowInTaskbar="True"
+        Topmost="True"
+        FontFamily="Microsoft YaHei UI, Segoe UI"
+        TextOptions.TextFormattingMode="Ideal"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True">
+
+    <Window.Resources>
+        <Style x:Key="IconBtn" TargetType="Button">
+            <Setter Property="Width" Value="26" />
+            <Setter Property="Height" Value="24" />
+            <Setter Property="Margin" Value="1,0,0,0" />
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+            <Setter Property="FontSize" Value="10" />
+            <Setter Property="Foreground" Value="{DynamicResource SetSub}" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="b" CornerRadius="6" Background="Transparent">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <!-- 跟随主题的浅色/深色悬停底色，别再写死深色（浅色主题下会变成一块黑框） -->
+                                <Setter TargetName="b" Property="Background" Value="{DynamicResource SetHover}" />
+                                <Setter Property="Foreground" Value="{DynamicResource SetText}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="b" Property="Opacity" Value="0.7" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Border x:Name="ShellPanel" CornerRadius="18" Background="#0A0E13" BorderBrush="#19222D" BorderThickness="1">
+            <Grid>
+                <!-- 壁纸层 -->
+                <Border x:Name="WallLayer" CornerRadius="18" ClipToBounds="True" Visibility="Collapsed">
+                    <Border.Background>
+                        <ImageBrush x:Name="WallBrush" Stretch="UniformToFill" />
+                    </Border.Background>
+                </Border>
+                <Border x:Name="WallDim" CornerRadius="18" Background="#05070A" Opacity="0" IsHitTestVisible="False" />
+
+                <!-- Hidden：能滚但不画滚动条，保持界面干净 -->
+                <!-- VerticalContentAlignment=Top 必须显式写：默认会把内容块垂直居中，
+                     内容比视口矮时整个网格就往下偏，顶部空出一大截 -->
+                <ScrollViewer x:Name="DeckScroll" VerticalScrollBarVisibility="Hidden"
+                              HorizontalScrollBarVisibility="Disabled" Background="Transparent"
+                              VerticalContentAlignment="Top" HorizontalContentAlignment="Left"
+                              Focusable="False" Padding="0,0,0,0">
+                    <Canvas x:Name="Deck" ClipToBounds="False" Background="Transparent" />
+                </ScrollViewer>
+
+                <TextBlock x:Name="EmptyHint" Text="正在识别硬件传感器…" Foreground="#4A5A6C" FontSize="13"
+                           HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False" />
+
+                <!-- 顶部控制条 -->
+                <!-- 顶部控制条：自动隐藏时由代码淡入淡出 -->
+                <StackPanel x:Name="CtrlBar" Orientation="Horizontal" HorizontalAlignment="Right"
+                            VerticalAlignment="Top" Margin="0,7,9,0" Opacity="0" IsHitTestVisible="False">
+
+                    <Button x:Name="BtnMax" Style="{StaticResource IconBtn}" Content="&#xE922;" ToolTip="最大化 / 还原 (Ctrl+Alt+M)" />
+                    <Button x:Name="BtnLock" Style="{StaticResource IconBtn}" Content="&#xE72E;" ToolTip="锁定布局 (Ctrl+Alt+L)" />
+                    <Button x:Name="BtnAdd" Style="{StaticResource IconBtn}" Content="&#xE710;" ToolTip="添加监控项" />
+                    <Button x:Name="BtnSettings" Style="{StaticResource IconBtn}" Content="&#xE713;" ToolTip="设置 (Ctrl+Alt+S)" />
+                    <Button x:Name="BtnPin" Style="{StaticResource IconBtn}" Content="&#xE840;" ToolTip="窗口置顶" />
+                    <Button x:Name="BtnClose" Style="{StaticResource IconBtn}" Content="&#xE8BB;" ToolTip="关闭" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- 窗口缩放手柄 -->
+        <Thumb x:Name="WinGrip" Width="20" Height="20" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+               Cursor="SizeNWSE" Margin="0,0,2,2">
+            <Thumb.Template>
+                <ControlTemplate TargetType="Thumb">
+                    <Border Background="Transparent">
+                        <Path Data="M 15,4 L 4,15 M 15,9.5 L 9.5,15 M 15,15 L 15,14.2"
+                              Stroke="#33404F" StrokeThickness="1.2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                    </Border>
+                </ControlTemplate>
+            </Thumb.Template>
+        </Thumb>
+    </Grid>
+</Window>

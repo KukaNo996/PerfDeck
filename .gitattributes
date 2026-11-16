@@ -1,0 +1,8 @@
+* text=auto eol=lf
+*.cs    text diff=csharp
+*.xaml  text
+*.csproj text
+*.ico   binary
+*.png   binary
+*.exe   binary
+*.dll   binary

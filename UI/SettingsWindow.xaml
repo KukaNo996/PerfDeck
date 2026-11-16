@@ -1,0 +1,431 @@
+<Window x:Class="PerfDeck.UI.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="设置" Width="680" Height="760"
+        WindowStyle="None" AllowsTransparency="True" Background="Transparent"
+        ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Topmost="True"
+        FontFamily="Microsoft YaHei UI, Segoe UI" TextOptions.TextFormattingMode="Ideal"
+        UseLayoutRounding="True">
+
+    <Window.Resources>
+        <Style x:Key="RowLabel" TargetType="TextBlock" BasedOn="{StaticResource FieldLabel}">
+            <Setter Property="Margin" Value="0,0,0,6" />
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+        <Style x:Key="InlineCheck" TargetType="CheckBox">
+            <Setter Property="Margin" Value="0,0,22,10" />
+        </Style>
+    </Window.Resources>
+
+    <Border CornerRadius="14" Background="{DynamicResource SetPanel}"
+            BorderBrush="{DynamicResource SetBorder}" BorderThickness="1">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- 标题栏 -->
+            <Grid Grid.Row="0" Margin="24,18,16,14" MouseLeftButtonDown="Header_MouseDown">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="设置" Foreground="{DynamicResource SetText}" FontSize="16" FontWeight="SemiBold" />
+                    <TextBlock Text="PerfDeck · 副屏性能监控" Foreground="{DynamicResource SetDim}"
+                               FontSize="11.5" Margin="0,3,0,0" />
+                </StackPanel>
+                <Button x:Name="BtnClose" Content="&#xE8BB;" Style="{StaticResource IconBtn}"
+                        HorizontalAlignment="Right" VerticalAlignment="Center" />
+            </Grid>
+
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="24,0,18,0" Padding="0,0,8,0">
+                <ScrollViewer.Resources>
+                    <Style TargetType="ScrollBar" BasedOn="{StaticResource ThinScroll}" />
+                </ScrollViewer.Resources>
+                <StackPanel Margin="0,4,0,4">
+
+                    <!-- ========== 外观 ========== -->
+                    <Border Style="{StaticResource SectFirst}">
+                        <StackPanel>
+                            <TextBlock Text="外观" Style="{StaticResource SectionTitle}" />
+                            <TextBlock Text="配色主题、壁纸与窗口透明度" Foreground="{DynamicResource SetDim}" FontSize="11.5"
+                                       Margin="0,-6,0,0" TextWrapping="Wrap" />
+
+                            <TextBlock Text="配色主题" Style="{StaticResource RowLabel}" Margin="0,16,0,6" />
+                            <WrapPanel x:Name="ThemePanel" />
+
+                            <TextBlock Text="窗口不透明度" Style="{StaticResource RowLabel}" Margin="0,16,0,4" />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="46" />
+                                </Grid.ColumnDefinitions>
+                                <Slider Grid.Column="0" x:Name="SldOpacity" Minimum="0.3" Maximum="1"
+                                        SmallChange="0.02" LargeChange="0.1" ValueChanged="Opacity_Changed" />
+                                <TextBlock Grid.Column="1" x:Name="LblOpacity" Text="100%" TextAlignment="Right"
+                                           Foreground="{DynamicResource SetSub}" FontSize="12" VerticalAlignment="Center" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ========== 壁纸 ========== -->
+                    <Border Style="{StaticResource Sect}">
+                        <StackPanel>
+                            <TextBlock Text="壁纸" Style="{StaticResource SectionTitle}" />
+                            <TextBlock Text="背景图片与模糊、暗化效果" Foreground="{DynamicResource SetDim}" FontSize="11.5"
+                                       Margin="0,-6,0,0" TextWrapping="Wrap" />
+
+                            <Grid Margin="0,4,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0" Content="选择图片…" Style="{StaticResource Btn}" Click="Wallpaper_Click" />
+                                <Button Grid.Column="1" Content="清除" Style="{StaticResource Btn}" Margin="8,0,0,0" Click="WallClear_Click" />
+                                <TextBlock Grid.Column="2" x:Name="LblWall" Text="未设置"
+                                           Foreground="{DynamicResource SetDim}" FontSize="11"
+                                           VerticalAlignment="Center" Margin="12,0,0,0"
+                                           TextTrimming="CharacterEllipsis" />
+                            </Grid>
+
+                            <Grid Margin="0,4,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="64" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="46" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="模糊" Style="{StaticResource FieldLabel}" Margin="0,0,0,10" />
+                                <Slider Grid.Row="0" Grid.Column="1" x:Name="SldBlur" Minimum="0" Maximum="40"
+                                        SmallChange="1" LargeChange="4" Margin="0,0,10,10" ValueChanged="Blur_Changed" />
+                                <TextBlock Grid.Row="0" Grid.Column="2" x:Name="LblBlur" Text="12" TextAlignment="Right"
+                                           Foreground="{DynamicResource SetSub}" FontSize="12" VerticalAlignment="Center" Margin="0,0,0,10" />
+
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="暗化" Style="{StaticResource FieldLabel}" Margin="0,0,0,10" />
+                                <Slider Grid.Row="1" Grid.Column="1" x:Name="SldDim" Minimum="0" Maximum="0.9"
+                                        SmallChange="0.01" LargeChange="0.1" Margin="0,0,10,10" ValueChanged="Dim_Changed" />
+                                <TextBlock Grid.Row="1" Grid.Column="2" x:Name="LblDim" Text="45%" TextAlignment="Right"
+                                           Foreground="{DynamicResource SetSub}" FontSize="12" VerticalAlignment="Center" Margin="0,0,0,10" />
+
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="卡片" Style="{StaticResource FieldLabel}" />
+                                <Slider Grid.Row="2" Grid.Column="1" x:Name="SldCardAlpha" Minimum="0.35" Maximum="1"
+                                        SmallChange="0.01" LargeChange="0.1" Margin="0,0,10,0" ValueChanged="CardAlpha_Changed" />
+                                <TextBlock Grid.Row="2" Grid.Column="2" x:Name="LblCardAlpha" Text="100%" TextAlignment="Right"
+                                           Foreground="{DynamicResource SetSub}" FontSize="12" VerticalAlignment="Center" />
+                            </Grid>
+                            <TextBlock Style="{StaticResource Hint}" Text="用壁纸时把卡片不透明度调到 85% 左右，背景能透出来、数字也清楚。" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ========== 刷新与时间 ========== -->
+                    <Border Style="{StaticResource Sect}">
+                        <StackPanel>
+                            <TextBlock Text="刷新与时间" Style="{StaticResource SectionTitle}" />
+                            <TextBlock Text="采样频率、时钟格式与字体" Foreground="{DynamicResource SetDim}" FontSize="11.5"
+                                       Margin="0,-6,0,0" TextWrapping="Wrap" />
+
+                            <Grid Margin="0,4,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="64" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="56" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="刷新频率" Style="{StaticResource FieldLabel}" />
+                                <Slider Grid.Column="1" x:Name="SldInterval" Minimum="0.5" Maximum="10"
+                                        TickFrequency="0.5" IsSnapToTickEnabled="True"
+                                        SmallChange="0.5" LargeChange="1" Margin="0,0,10,0" ValueChanged="Interval_Changed" />
+                                <TextBlock Grid.Column="2" x:Name="LblInterval" Text="1.0 秒" TextAlignment="Right"
+                                           Foreground="{DynamicResource SetSub}" FontSize="12" VerticalAlignment="Center" />
+                            </Grid>
+                            <TextBlock Style="{StaticResource Hint}" Text="间隔越大越省电；时钟始终每秒刷新，不受此影响。" />
+
+                            <TextBlock Text="时间格式" Style="{StaticResource RowLabel}" Margin="0,16,0,6" />
+                            <WrapPanel>
+                                <ToggleButton Style="{StaticResource Pill}" Content="HH:mm:ss" Tag="HH:mm:ss" Click="Format_Click" />
+                                <ToggleButton Style="{StaticResource Pill}" Content="HH:mm" Tag="HH:mm" Click="Format_Click" />
+                                <ToggleButton Style="{StaticResource Pill}" Content="dd HH:mm:ss" Tag="dd HH:mm:ss" Click="Format_Click" />
+                                <ToggleButton Style="{StaticResource Pill}" Content="MM-dd HH:mm" Tag="MM-dd HH:mm" Click="Format_Click" />
+                                <ToggleButton Style="{StaticResource Pill}" Content="hh:mm:ss tt" Tag="hh:mm:ss tt" Click="Format_Click" />
+                            </WrapPanel>
+                            <TextBox x:Name="TxtTimeFormat" Margin="0,2,0,0" TextChanged="TxtTimeFormat_TextChanged" />
+                            <TextBlock x:Name="LblPreview" Style="{StaticResource Hint}" Margin="0,6,0,0" Text="预览：" />
+
+                            <Grid Margin="0,4,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <CheckBox Grid.Column="0" x:Name="ChkShowDate" Content="显示日期" Margin="0,0,16,0" />
+                                <TextBox Grid.Column="1" x:Name="TxtDateFormat" />
+                            </Grid>
+                            <TextBlock Style="{StaticResource Hint}" Text="日期格式示例：yyyy年M月d日 dddd / yyyy-MM-dd" />
+
+                            <TextBlock Text="时间字体" Style="{StaticResource RowLabel}" Margin="0,16,0,6" />
+                            <WrapPanel x:Name="ClockFontPanel" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ========== 监控项 ========== -->
+                    <Border Style="{StaticResource Sect}">
+                        <StackPanel>
+                            <TextBlock Text="监控项" Style="{StaticResource SectionTitle}" />
+                            <TextBlock Text="卡片尺寸、显示项与采样对象" Foreground="{DynamicResource SetDim}" FontSize="11.5"
+                                       Margin="0,-6,0,0" TextWrapping="Wrap" />
+
+                            <Grid Margin="0,4,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="64" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="56" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="进程条数" Style="{StaticResource FieldLabel}" />
+                                <Slider Grid.Column="1" x:Name="SldProc" Minimum="3" Maximum="8"
+                                        TickFrequency="1" IsSnapToTickEnabled="True"
+                                        SmallChange="1" LargeChange="1" Margin="0,0,10,0" ValueChanged="Proc_Changed" />
+                                <TextBlock Grid.Column="2" x:Name="LblProc" Text="5 条" TextAlignment="Right"
+                                           Foreground="{DynamicResource SetSub}" FontSize="12" VerticalAlignment="Center" />
+                            </Grid>
+
+                            <TextBlock Text="卡片尺寸" Style="{StaticResource RowLabel}" Margin="0,16,0,6" />
+                            <CheckBox x:Name="ChkUniform" Content="自动适配卡片大小（统一宽高，自动排列）"
+                                      Style="{StaticResource InlineCheck}" Margin="0,0,0,8" />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="64" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="56" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="卡片高度" Style="{StaticResource FieldLabel}" />
+                                <Slider Grid.Column="1" x:Name="SldCardH" Minimum="130" Maximum="300"
+                                        TickFrequency="2" IsSnapToTickEnabled="True"
+                                        SmallChange="2" LargeChange="10" Margin="0,0,10,0" ValueChanged="CardH_Changed" />
+                                <TextBlock Grid.Column="2" x:Name="LblCardH" Text="168" TextAlignment="Right"
+                                           Foreground="{DynamicResource SetSub}" FontSize="12" VerticalAlignment="Center" />
+                            </Grid>
+                            <TextBlock Style="{StaticResource Hint}" Text="开启后所有卡片等宽等高，列数按窗口宽度自动挑选（末行留白最少）；关闭则恢复各卡片自定义尺寸。" />
+
+                            <TextBlock Text="显示选项" Style="{StaticResource RowLabel}" Margin="0,16,0,6" />
+                            <UniformGrid Columns="2">
+                                <CheckBox x:Name="ChkTopmost" Content="窗口置顶" Style="{StaticResource InlineCheck}" />
+                                <CheckBox x:Name="ChkTaskbar" Content="显示任务栏图标" Style="{StaticResource InlineCheck}" />
+                                <CheckBox x:Name="ChkSpark" Content="显示趋势曲线" Style="{StaticResource InlineCheck}" />
+                                <CheckBox x:Name="ChkClickThrough" Content="鼠标穿透" Style="{StaticResource InlineCheck}" />
+                                <CheckBox x:Name="ChkAutoHideBar" Content="工具栏自动隐藏" Style="{StaticResource InlineCheck}" />
+                                <CheckBox x:Name="ChkShadow" Content="卡片投影（立体感）" Style="{StaticResource InlineCheck}" />
+                            </UniformGrid>
+                            <TextBlock Style="{StaticResource Hint}" Text="鼠标穿透后点击会穿过窗口，Ctrl+Alt+X 可随时切回；Ctrl+Alt+L 锁定布局，Ctrl+Alt+M 最大化。" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ========== 天气 ========== -->
+                    <Border Style="{StaticResource Sect}">
+                        <StackPanel>
+                            <TextBlock Text="天气" Style="{StaticResource SectionTitle}" />
+                            <TextBlock Text="定位方式与城市" Foreground="{DynamicResource SetDim}" FontSize="11.5"
+                                       Margin="0,-6,0,0" TextWrapping="Wrap" />
+
+                            <TextBlock Text="定位方式" Style="{StaticResource RowLabel}" Margin="0,16,0,6" />
+                            <WrapPanel x:Name="WeatherModePanel">
+                                <ToggleButton Style="{StaticResource Pill}" Content="自动定位（IP）" Tag="auto" Click="WeatherMode_Click" />
+                                <ToggleButton Style="{StaticResource Pill}" Content="手动城市" Tag="manual" Click="WeatherMode_Click" />
+                            </WrapPanel>
+
+                            <Grid Margin="0,2,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="城市" Style="{StaticResource FieldLabel}" Margin="0,0,10,0" />
+                                <TextBox Grid.Column="1" x:Name="TxtWeatherCity" />
+                                <Button Grid.Column="2" Content="刷新" Style="{StaticResource Btn}" Margin="8,0,0,0"
+                                        Click="WeatherRefresh_Click" />
+                            </Grid>
+
+                            <TextBlock x:Name="LblWeatherStatus" Style="{StaticResource Hint}" Margin="0,8,0,0" Text="状态：未知" />
+                            <Button Content="重新请求定位权限" Style="{StaticResource Btn}" Margin="0,10,0,0"
+                                    HorizontalAlignment="Left" Click="WeatherReask_Click" />
+                            <TextBlock Style="{StaticResource Hint}"
+                                       Text="定位只通过 IP 归属地取得城市与经纬度，仅用于查询天气，不写入配置、不上传其他信息；拒绝授权或定位失败会自动降级为手动城市。" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ========== 网络探测 ========== -->
+                    <Border Style="{StaticResource Sect}">
+                        <StackPanel>
+                            <TextBlock Text="网络探测" Style="{StaticResource SectionTitle}" />
+                            <TextBlock Text="延迟探测目标与超时" Foreground="{DynamicResource SetDim}" FontSize="11.5"
+                                       Margin="0,-6,0,0" TextWrapping="Wrap" />
+                            <Grid Margin="0,4,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="72" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="探测目标" Style="{StaticResource FieldLabel}" Margin="0,0,10,0" />
+                                <TextBox Grid.Column="1" x:Name="TxtPingHost" />
+                                <TextBlock Grid.Column="2" Text="超时" Style="{StaticResource FieldLabel}" Margin="14,0,8,0" />
+                                <TextBox Grid.Column="3" x:Name="TxtTimeout" TextAlignment="Right" />
+                            </Grid>
+                            <TextBlock Style="{StaticResource Hint}"
+                                       Text="默认 223.5.5.5（阿里公共 DNS）。ICMP 被屏蔽时会自动改用 TCP 443 握手计时，并在卡片上标注。" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ========== 阈值 ========== -->
+                    <Border Style="{StaticResource Sect}">
+                        <StackPanel>
+                            <TextBlock Text="异常高亮阈值" Style="{StaticResource SectionTitle}" />
+                            <TextBlock Text="达到即变色提示的界线" Foreground="{DynamicResource SetDim}" FontSize="11.5"
+                                       Margin="0,-6,0,0" TextWrapping="Wrap" />
+                            <Grid Margin="0,4,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="72" />
+                                    <ColumnDefinition Width="72" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="1" Text="警告" Foreground="{DynamicResource SetDim}"
+                                           FontSize="11" TextAlignment="Center" Margin="0,0,0,6" />
+                                <TextBlock Grid.Row="0" Grid.Column="2" Text="严重" Foreground="{DynamicResource SetDim}"
+                                           FontSize="11" TextAlignment="Center" Margin="0,0,0,6" />
+
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="占用率 (%)" Style="{StaticResource FieldLabel}" Margin="0,0,0,8" />
+                                <TextBox Grid.Row="1" Grid.Column="1" x:Name="TxtLoadWarn" Margin="4,0,0,8" TextAlignment="Center" />
+                                <TextBox Grid.Row="1" Grid.Column="2" x:Name="TxtLoadCrit" Margin="10,0,0,8" TextAlignment="Center" />
+
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="CPU / 显卡温度 (°C)" Style="{StaticResource FieldLabel}" Margin="0,0,0,8" />
+                                <TextBox Grid.Row="2" Grid.Column="1" x:Name="TxtTempWarn" Margin="4,0,0,8" TextAlignment="Center" />
+                                <TextBox Grid.Row="2" Grid.Column="2" x:Name="TxtTempCrit" Margin="10,0,0,8" TextAlignment="Center" />
+
+                                <TextBlock Grid.Row="3" Grid.Column="0" Text="硬盘温度 (°C)" Style="{StaticResource FieldLabel}" Margin="0,0,0,8" />
+                                <TextBox Grid.Row="3" Grid.Column="1" x:Name="TxtDiskWarn" Margin="4,0,0,8" TextAlignment="Center" />
+                                <TextBox Grid.Row="3" Grid.Column="2" x:Name="TxtDiskCrit" Margin="10,0,0,8" TextAlignment="Center" />
+
+                                <TextBlock Grid.Row="4" Grid.Column="0" Text="网络延迟 (ms)" Style="{StaticResource FieldLabel}" Margin="0,0,0,8" />
+                                <TextBox Grid.Row="4" Grid.Column="1" x:Name="TxtLatWarn" Margin="4,0,0,8" TextAlignment="Center" />
+                                <TextBox Grid.Row="4" Grid.Column="2" x:Name="TxtLatCrit" Margin="10,0,0,8" TextAlignment="Center" />
+
+                                <TextBlock Grid.Row="5" Grid.Column="0" Text="丢包率 (%)" Style="{StaticResource FieldLabel}" />
+                                <TextBox Grid.Row="5" Grid.Column="1" x:Name="TxtLossWarn" Margin="4,0,0,0" TextAlignment="Center" />
+                                <TextBox Grid.Row="5" Grid.Column="2" x:Name="TxtLossCrit" Margin="10,0,0,0" TextAlignment="Center" />
+                            </Grid>
+                            <TextBlock Style="{StaticResource Hint}" Text="左列达到即黄色提示，右列达到即红色提示。" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ========== 性能与内容 ========== -->
+                    <Border Style="{StaticResource Sect}">
+                        <StackPanel>
+                            <TextBlock Text="性能与内容" Style="{StaticResource SectionTitle}" />
+                            <TextBlock Text="刷新挡位、热搜条数与降频策略" Foreground="{DynamicResource SetDim}" FontSize="11.5"
+                                       Margin="0,-6,0,0" TextWrapping="Wrap" />
+
+                            <TextBlock Text="性能挡位" Style="{StaticResource RowLabel}" Margin="0,4,0,0" />
+
+                            <WrapPanel x:Name="PerfPanel" Margin="0,8,0,0" />
+
+                            <TextBlock x:Name="LblPerfDesc" Style="{StaticResource Hint}" Margin="0,6,0,0"
+                                       Text="刷新 1 秒 · 趋势曲线 · 进程 5 条" />
+                            <TextBlock x:Name="LblPerfMem" Style="{StaticResource Hint}" Margin="0,2,0,0"
+                                       Text="预估 200–225 MB" />
+                            <TextBlock Style="{StaticResource Hint}"
+                                       Text="挡位是快捷预设，会覆盖下面的刷新频率 / 进程条数 / 趋势曲线；单独再调其中任意一项就变成自定义。" />
+
+                            <CheckBox x:Name="ChkAdaptiveThrottle" Content="游戏 / 全屏重载时自动降低刷新频率"
+                                      Style="{StaticResource InlineCheck}" Margin="0,12,0,8" />
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="72" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="56" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="降频后间隔" Style="{StaticResource FieldLabel}" />
+                                <Slider Grid.Column="1" x:Name="SldThrottle" Minimum="1" Maximum="15"
+                                        TickFrequency="1" IsSnapToTickEnabled="True"
+                                        SmallChange="1" LargeChange="5" Margin="0,0,10,0" ValueChanged="Throttle_Changed" />
+                                <TextBlock Grid.Column="2" x:Name="LblThrottle" Text="5 秒" TextAlignment="Right"
+                                           Foreground="{DynamicResource SetSub}" FontSize="12" VerticalAlignment="Center" />
+                            </Grid>
+                            <TextBlock Style="{StaticResource Hint}" Text="检测到前台全屏程序（游戏、渲染、视频）时把采样间隔拉长，退出后自动恢复。" />
+
+                            <Grid Margin="0,10,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="72" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="56" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="热搜条数" Style="{StaticResource FieldLabel}" />
+                                <Slider Grid.Column="1" x:Name="SldHotCount" Minimum="3" Maximum="10"
+                                        TickFrequency="1" IsSnapToTickEnabled="True"
+                                        SmallChange="1" LargeChange="2" Margin="0,0,10,0" ValueChanged="HotCount_Changed" />
+                                <TextBlock Grid.Column="2" x:Name="LblHotCount" Text="5 条" TextAlignment="Right"
+                                           Foreground="{DynamicResource SetSub}" FontSize="12" VerticalAlignment="Center" />
+                            </Grid>
+                            <TextBlock Style="{StaticResource Hint}" Text="热搜卡片纵向能放几行由卡片高度决定，这里设的是上限。" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ========== 系统 ========== -->
+                    <Border Style="{StaticResource Sect}">
+                        <StackPanel>
+                            <TextBlock Text="系统" Style="{StaticResource SectionTitle}" />
+                            <TextBlock Text="启动方式与权限" Foreground="{DynamicResource SetDim}" FontSize="11.5"
+                                       Margin="0,-6,0,0" TextWrapping="Wrap" />
+                            <UniformGrid Columns="2" Margin="0,4,0,0">
+                                <CheckBox x:Name="ChkAutoStart" Content="开机自动启动" Style="{StaticResource InlineCheck}" />
+                                <CheckBox x:Name="ChkElevate" Content="启动时请求管理员权限" Style="{StaticResource InlineCheck}" />
+                            </UniformGrid>
+
+                            <TextBlock Text="对外数据接口" Style="{StaticResource RowLabel}" Margin="0,16,0,6" />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="72" />
+                                </Grid.ColumnDefinitions>
+                                <CheckBox Grid.Column="0" x:Name="ChkApi" Content="启用"
+                                          Style="{StaticResource InlineCheck}" Margin="0,0,14,0" />
+                                <TextBox Grid.Column="1" x:Name="TxtApiPort" TextAlignment="Left" Margin="0,0,8,0" />
+                                <TextBlock Grid.Column="2" Text="端口" Foreground="{DynamicResource SetDim}"
+                                           FontSize="11" VerticalAlignment="Center" />
+                            </Grid>
+                            <TextBlock Style="{StaticResource Hint}"
+                                       Text="开启后本机可通过 http://127.0.0.1:端口/api/v1 取硬件数据（只读、仅本机）。端口填 0 表示关闭；改完需要重新打开本窗口生效。" />
+                            <TextBlock Style="{StaticResource Hint}"
+                                       Text="CPU / 硬盘温度与风扇转速需要管理员权限；拒绝后其余指标照常显示。配置保存在 %APPDATA%\PerfDeck\config.json。" />
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- 底部按钮 -->
+            <Border Grid.Row="2" BorderBrush="{DynamicResource SetBorderSoft}" BorderThickness="0,1,0,0">
+                <Grid Margin="24,14">
+                    <TextBlock Text="外观类设置即时生效" Foreground="{DynamicResource SetDim}" FontSize="11"
+                               VerticalAlignment="Center" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="取消" Style="{StaticResource Btn}" Click="Cancel_Click" Margin="0,0,8,0" />
+                        <Button Content="保存并应用" Style="{StaticResource BtnPrimary}" Click="Apply_Click" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

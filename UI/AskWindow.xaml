@@ -1,0 +1,30 @@
+<Window x:Class="PerfDeck.UI.AskWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Width="452" Height="216"
+        WindowStyle="None" AllowsTransparency="True" Background="Transparent"
+        ResizeMode="NoResize" WindowStartupLocation="CenterScreen"
+        ShowInTaskbar="False" Topmost="True"
+        FontFamily="Microsoft YaHei UI, Segoe UI" UseLayoutRounding="True">
+
+    <Border CornerRadius="14" Background="#0A0E13" BorderBrush="#243040" BorderThickness="1">
+        <Grid Margin="22,18,22,16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock x:Name="TxtTitle" Grid.Row="0" Text="需要定位权限"
+                       Foreground="#E9F1FA" FontSize="15" FontWeight="SemiBold" />
+
+            <TextBlock x:Name="TxtMessage" Grid.Row="1" Text="" Margin="0,10,0,0"
+                       Foreground="#93A4B8" FontSize="12.5" TextWrapping="Wrap" LineHeight="20" />
+
+            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,14,0,0">
+                <Button x:Name="BtnDeny" Content="不允许" Style="{StaticResource Btn}" Click="Deny_Click" />
+                <Button x:Name="BtnAllow" Content="允许" Style="{StaticResource BtnPrimary}" Margin="8,0,0,0" Click="Allow_Click" />
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

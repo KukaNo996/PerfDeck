@@ -1,0 +1,99 @@
+<UserControl x:Class="PerfDeck.UI.CardHost"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="clr-namespace:PerfDeck.UI"
+             UseLayoutRounding="True"
+             SnapsToDevicePixels="True">
+
+    <Grid x:Name="RootGrid">
+        <Border x:Name="Shell" CornerRadius="14" BorderThickness="1" BorderBrush="#1E2733">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0.45,1">
+                    <GradientStop Color="#161F29" Offset="0" />
+                    <GradientStop Color="#0D131A" Offset="1" />
+                </LinearGradientBrush>
+            </Border.Background>
+        </Border>
+
+        <!-- 异常时的背景染色 -->
+        <Border x:Name="AlertTint" CornerRadius="14" Background="#14F87171" Visibility="Collapsed" IsHitTestVisible="False" />
+
+        <Grid x:Name="ContentRoot" Margin="16,13,16,12">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- 标题行 -->
+            <Grid Grid.Row="0">
+                <StackPanel x:Name="TitleRow" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Ellipse x:Name="Dot" Width="6" Height="6" Fill="#4CC9F0" VerticalAlignment="Center" />
+                    <TextBlock x:Name="TitleText" Text="CPU" Margin="7,0,0,0" FontSize="11"
+                               Foreground="#8B9CAD" FontWeight="SemiBold" VerticalAlignment="Center" />
+                </StackPanel>
+
+                <Border x:Name="ChipBox" HorizontalAlignment="Right" VerticalAlignment="Center"
+                        CornerRadius="5" Padding="6,1.5" Background="#1A2431" BorderThickness="1" BorderBrush="#222D3A"
+                        Visibility="Collapsed">
+                    <TextBlock x:Name="ChipText" Text="" FontSize="10.5" Foreground="#B9C7D6" />
+                </Border>
+            </Grid>
+
+            <!-- 主数值（居中模式下会把说明文字收进来做第二行） -->
+            <StackPanel x:Name="CenterStack" Grid.Row="1" VerticalAlignment="Center">
+                <StackPanel x:Name="ValueRow" Orientation="Horizontal" HorizontalAlignment="Left">
+                    <TextBlock x:Name="ValueText" Text="—" Foreground="#E9F1FA" FontWeight="SemiBold"
+                               Typography.NumeralAlignment="Tabular" TextOptions.TextFormattingMode="Ideal"
+                               TextTrimming="CharacterEllipsis" />
+                    <!-- 时钟专用：逐字符定宽渲染。中文字体的数字是比例宽度，
+                         整串居中时秒数一变就左右漂，拆成定宽单元格后位置恒定 -->
+                    <StackPanel x:Name="ClockChars" Orientation="Horizontal" Visibility="Collapsed" />
+                    <TextBlock x:Name="UnitText" Text="" Foreground="#6E7D8E" Margin="5,0,0,6" VerticalAlignment="Bottom" />
+                </StackPanel>
+                <TextBlock x:Name="SubText" Text="" Visibility="Collapsed"
+                           Typography.NumeralAlignment="Tabular" TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+
+            <!-- 天气图标 -->
+            <ui:WeatherGlyph x:Name="WeatherIcon" Grid.Row="1" HorizontalAlignment="Right"
+                             VerticalAlignment="Center" Width="34" Height="34" Visibility="Collapsed" />
+
+            <!-- 排行榜（进程卡片） -->
+            <!-- 多日天气（尺寸够时替代大号温度） -->
+            <ui:WeatherStrip x:Name="WeatherDays" Grid.Row="1" Margin="0,4,0,0" Visibility="Collapsed" />
+
+            <!-- 热搜分类切换 + 列表 / 进程排行 -->
+            <StackPanel x:Name="ListArea" Grid.Row="1" VerticalAlignment="Center" Visibility="Collapsed">
+                <WrapPanel x:Name="HotTabs" Margin="0,0,0,5" Visibility="Collapsed" />
+                <StackPanel x:Name="ItemList" />
+            </StackPanel>
+
+            <!-- 趋势曲线 -->
+            <ui:Sparkline x:Name="Spark" Grid.Row="2" Height="26" Margin="0,8,0,0" Visibility="Collapsed" />
+
+            <!-- 进度条 -->
+            <Border x:Name="BarTrack" Grid.Row="2" Height="3" CornerRadius="2" Background="#1C2634"
+                    Margin="0,10,0,1" VerticalAlignment="Bottom" Visibility="Collapsed">
+                <Border x:Name="BarFill" HorizontalAlignment="Left" CornerRadius="2" Width="0" Background="#4CC9F0" />
+            </Border>
+
+            <TextBlock x:Name="FooterText" Grid.Row="3" Text="" Foreground="#5D6B7C" FontSize="10.5"
+                       Margin="0,8,0,0" TextTrimming="CharacterEllipsis" />
+        </Grid>
+
+        <!-- 缩放手柄 -->
+        <Thumb x:Name="Grip" Width="22" Height="22" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+               Cursor="SizeNWSE" Visibility="Collapsed" ToolTip="拖动调整卡片大小">
+            <Thumb.Template>
+                <ControlTemplate TargetType="Thumb">
+                    <Border Background="Transparent">
+                        <Path Data="M 13,5 L 5,13 M 13,9.5 L 9.5,13" Stroke="#4A5A6E" StrokeThickness="1.2"
+                              StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                    </Border>
+                </ControlTemplate>
+            </Thumb.Template>
+        </Thumb>
+    </Grid>
+</UserControl>
