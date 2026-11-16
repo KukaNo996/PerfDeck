@@ -184,7 +184,7 @@ workflow 的 Artifacts 里留 14 天。
 
 ## 许可证
 
-[MIT](LICENSE) © 2026 Zhu Shang
+[MIT](LICENSE) © 2026 KukaNo996
 
 ## 免责声明
 
