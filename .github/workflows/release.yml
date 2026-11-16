@@ -1,0 +1,88 @@
+name: release
+
+# 打一个 v* 标签就自动产出发行版：
+#   git tag v1.0.0 && git push origin v1.0.0
+# 也可以在 Actions 页面点 "Run workflow" 手动跑（只构建、不建 Release）。
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write          # 创建 Release、上传附件
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      # csproj 里已经配好 RuntimeIdentifier=win-x64、SelfContained、PublishSingleFile，
+      # 所以这一条命令直接产出单个 PerfDeck.exe，不需要额外参数。
+      - name: 构建单文件 exe
+        run: dotnet publish -c Release -r win-x64 --nologo
+
+      - name: 打包 zip 与校验和
+        shell: pwsh
+        run: |
+          $ver = "${{ github.ref_name }}"
+          if (-not $ver.StartsWith('v')) { $ver = 'dev' }
+
+          $exe = 'bin/Release/net8.0-windows/win-x64/publish/PerfDeck.exe'
+          if (-not (Test-Path $exe)) { throw "没有找到构建产物：$exe" }
+
+          $stage = 'staging'
+          $dist  = 'dist'
+          New-Item -ItemType Directory -Force -Path $stage, $dist | Out-Null
+
+          Copy-Item $exe "$stage/PerfDeck.exe"
+          Copy-Item 'README.md', 'LICENSE' $stage
+
+          # 裸 exe 也放一份，方便直接下载就用
+          Copy-Item $exe "$dist/PerfDeck.exe"
+          Compress-Archive -Path "$stage/*" -DestinationPath "$dist/PerfDeck-$ver-win64.zip" -Force
+
+          $lines = foreach ($f in @("$dist/PerfDeck.exe", "$dist/PerfDeck-$ver-win64.zip")) {
+            $h = (Get-FileHash $f -Algorithm SHA256).Hash.ToLower()
+            $name = Split-Path $f -Leaf
+            "$h  $name"
+          }
+          $lines | Set-Content -Path "$dist/SHA256SUMS.txt" -Encoding ascii
+
+          Get-ChildItem $dist | Select-Object Name, @{n='MB';e={[math]::Round($_.Length/1MB,1)}}
+
+      - name: 上传构建产物（即使没打标签也能下载）
+        uses: actions/upload-artifact@v4
+        with:
+          name: PerfDeck-win64
+          path: |
+            dist/PerfDeck.exe
+            dist/*.zip
+            dist/SHA256SUMS.txt
+          retention-days: 14
+
+      - name: 发布 Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: PerfDeck ${{ github.ref_name }}
+          body: |
+            Windows 10/11 x64 单文件版，自带 .NET 运行时，双击即用。
+
+            - `PerfDeck.exe`：主程序（单文件，无需安装 .NET）
+            - `PerfDeck-${{ github.ref_name }}-win64.zip`：主程序 + 说明 + 许可证
+            - `SHA256SUMS.txt`：校验和
+
+            > 读取温度 / 风扇 / 功耗需要加载传感器驱动，程序会在需要时请求管理员权限。
+            > 首次运行建议先用 `PerfDeck.exe --dump` 确认能读到传感器。
+          files: |
+            dist/PerfDeck.exe
+            dist/*.zip
+            dist/SHA256SUMS.txt
+          fail_on_unmatched_files: false

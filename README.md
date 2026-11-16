@@ -120,6 +120,25 @@ dotnet publish -c Release -r win-x64
 # 产物：bin/Release/net8.0-windows/win-x64/publish/PerfDeck.exe
 ```
 
+或者用仓库里的脚本，一步产出 `dist/`（exe + zip + 校验和）：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools\make_release.ps1
+```
+
+### 自动发版
+
+推一个 `v*` 标签，GitHub Actions 会自动构建并创建 Release（`.github/workflows/release.yml`）：
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+Release 里会附上 `PerfDeck.exe`（裸单文件）、`PerfDeck-v1.0.0-win64.zip`（exe + 说明 + 许可证）
+和 `SHA256SUMS.txt`。在 Actions 页面点 **Run workflow** 则只构建、不建 Release，产物在
+workflow 的 Artifacts 里留 14 天。
+
 ## 快捷键
 
 | 组合 | 作用 |

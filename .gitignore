@@ -18,6 +18,8 @@ publish/
 
 # 单文件发布 / 打包输出
 release/
+dist/
+staging/
 *.zip
 
 # ---------- Visual Studio / Rider / VS Code ----------
